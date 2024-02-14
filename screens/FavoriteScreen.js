@@ -5,6 +5,7 @@ import Loading from '../components/LoadingComponent';
 import { baseUrl } from '../shared/baseUrl';
 import { SwipeRow } from 'react-native-swipe-list-view';
 import { toggleFavorite } from '../features/favorites/favorites.Slice';
+import { Alert } from 'react-native';
 
 const FavoritesScreen = ({ navigation }) => {
     const { campsitesArray, isLoading, errMess } = useSelector(
@@ -19,7 +20,32 @@ const FavoritesScreen = ({ navigation }) => {
                 <View style={styles.deleteView}>
                     <TouchableOpacity
                         style={styles.deleteTouchable}
-                        onPress={() => dispatch(toggleFavorite(campsite.id))}
+                        onPress={() =>
+                            Alert.alert(
+                                'Delete Favorite?',
+                                'Are you sure you wish to delete the favorite campsite ' +
+                                    campsite.name +
+                                    '?',
+                                [
+                                    {
+                                        text: 'Cancel',
+                                        onPress: () =>
+                                            console.log(
+                                                campsite.name + 'Not Deleted'
+                                            ),
+                                        style: 'cancel'
+                                    },
+                                    {
+                                        text: 'OK',
+                                        onPress: () =>
+                                            dispatch(
+                                                toggleFavorite(campsite.id)
+                                            )
+                                    }
+                                ],
+                                { cancelable: false }
+                            )
+                        }
                     >
                         <Text style={styles.deleteText}>Delete</Text>
                     </TouchableOpacity>
