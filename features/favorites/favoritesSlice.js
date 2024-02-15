@@ -16,5 +16,7 @@ const favoritesSlice = createSlice({
     }
 });
 
+export default favoritesSlice;
+
 export const { toggleFavorite } = favoritesSlice.actions;
 export const favoritesReducer = favoritesSlice.reducer;
