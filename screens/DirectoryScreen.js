@@ -21,7 +21,7 @@ const DirectoryScreen = ({ navigation }) => {
 
     const renderDirectoryItem = ({ item: campsite }) => {
         return (
-            <Animatable.View animation='fadeInRightBig' duration={2000}>
+            <Animatable.View animation='fadeInRightBig' duration={2000} delay={1000}>
                 <Tile
                     title={campsite.name}
                     caption={campsite.description}
