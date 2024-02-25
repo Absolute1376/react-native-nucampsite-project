@@ -6,6 +6,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as ImagePicker from 'expo-image-picker';
 import { baseUrl } from '../shared/baseUrl';
 import logo from '../assets/images/logo.png';
+import * as ImageManipulator from 'expo-image-manipulator';
+
+
 
 const LoginTab = ({ navigation }) => {
     const [username, setUsername] = useState('');
@@ -112,6 +115,25 @@ const RegisterTab = () => {
     const [remember, setRemember] = useState(false);
     const [imageUrl, setImageUrl] = useState(baseUrl + 'images/logo.png');
 
+ 
+  
+  
+
+
+    const getImageFromGallery = async () => {
+        const mediaLibraryPermissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (mediaLibraryPermissions.status === 'granted') {
+            const capturedImage = await ImagePicker.launchImageLibraryAsync({
+                allowsEditing: true,
+                aspect: [1, 1],
+            });
+            if (capturedImage.assets && capturedImage.assets.length > 0) {
+                processImage(capturedImage.assets[0].uri);
+            }
+        } else {
+            Alert.alert('Permissions not granted', 'Cannot access the gallery.');
+        }
+    };
     const handleRegister = () => {
         const userInfo = {
             username,
@@ -121,7 +143,7 @@ const RegisterTab = () => {
             email,
             remember
         };
-        console.log(JSON.stringify(userInfo));
+    console.log(JSON.stringify(userInfo));
         if (remember) {
             SecureStore.setItemAsync(
                 'userinfo',
@@ -136,22 +158,33 @@ const RegisterTab = () => {
             );
         }
     };
-
     const getImageFromCamera = async () => {
-        const cameraPermission =
-            await ImagePicker.requestCameraPermissionsAsync();
-
+        const cameraPermission = await ImagePicker.requestCameraPermissionsAsync();
         if (cameraPermission.status === 'granted') {
             const capturedImage = await ImagePicker.launchCameraAsync({
                 allowsEditing: true,
-                aspect: [1, 1]
+                aspect: [1, 1],
             });
             if (capturedImage.assets) {
-                console.log(capturedImage.assets[0]);
-                setImageUrl(capturedImage.assets[0].uri);
+                processImage(capturedImage.assets[0].uri);
             }
         }
     };
+    const processImage = async (imgUri) => {
+        try {
+            const processedImage = await ImageManipulator.manipulateAsync(
+                imgUri,
+                [{ resize: { width: 400, height: 400 } }],
+                { compress: 1, format: ImageManipulator.SaveFormat.PNG }
+            );
+            setImageUrl(processedImage.uri);
+        } catch (error) {
+            console.error('Error processing image:', error);
+        }
+    };
+
+
+
 
     return (
         <ScrollView>
@@ -163,6 +196,7 @@ const RegisterTab = () => {
                         style={styles.image}
                     />
                     <Button title='Camera' onPress={getImageFromCamera} />
+                    <Button title="Gallery" onPress={getImageFromGallery} /> 
                 </View>
                 <Input
                     placeholder='Username'

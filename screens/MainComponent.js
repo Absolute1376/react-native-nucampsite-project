@@ -232,14 +232,7 @@ const CustomDrawerContent = (props) => (
 const Main = () => {
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(fetchCampsites());
-        dispatch(fetchPromotions());
-        dispatch(fetchPartners());
-        dispatch(fetchComments());
-    }, [dispatch]);
-
-    useEffect(() => {
+    const showNetInfo = async () => {
         NetInfo.fetch().then((connectionInfo) => {
             Platform.OS === 'ios'
                 ? Alert.alert(
@@ -252,6 +245,17 @@ const Main = () => {
                       ToastAndroid.LONG
                   );
         });
+
+    }
+    useEffect(() => {
+        dispatch(fetchCampsites());
+        dispatch(fetchPromotions());
+        dispatch(fetchPartners());
+        dispatch(fetchComments());
+    }, [dispatch]);
+
+    useEffect(() => {
+    
 
         const unsubscribeNetInfo = NetInfo.addEventListener(
             (connectionInfo) => {
